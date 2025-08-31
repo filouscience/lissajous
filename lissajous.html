@@ -2,7 +2,7 @@
 
 <head>
   <title>Lissajous figures</title>
-  <script src="anime/anime.min.js"></script>
+  <script src="anime/anime.iife.min.js"></script>
   <script src="script.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -18,11 +18,11 @@
         <tr><td>X</td></tr>
         <tr><td>amplitude:</td><td><input class="input-field" type="number" step="1" id="amp_x" value="250" min="0">px</td></tr>
         <tr><td>frequency:</td><td><input class="input-field" type="number" step="0.1" id="frq_x" value="1" min="0" onchange="on_freq_change()">s<sup>-1</sup></td></tr>
-        <tr><td>phase:</td><td><input class="input-field" type="number" step="0.01" id="ph0_x" value="0.5">pi</td></tr>
+        <tr><td>phase:</td><td><input class="input-field" type="number" step="0.01" id="ph0_x" value="0.5">&pi;</td></tr>
         <tr><td>Y</td></tr>
         <tr><td>amplitude:</td><td><input class="input-field" type="number" step="1" id="amp_y" value="250" min="0">px</td></tr>
         <tr><td>frequency:</td><td><input class="input-field" type="number" step="0.1" id="frq_y" value="2" min="0" onchange="on_freq_change()">s<sup>-1</sup></td></tr>
-        <tr><td>phase:</td><td><input class="input-field" type="number" step="0.01" id="ph0_y" value="0">pi</td></tr>
+        <tr><td>phase:</td><td><input class="input-field" type="number" step="0.01" id="ph0_y" value="0">&pi;</td></tr>
         <tr><td>total</td></tr>
         <tr><td>period:</td><td><input class="input-field" type = "number" id="period" value="1" disabled>s</td></tr>
         <tr><td>animation</td></tr>

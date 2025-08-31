@@ -56,39 +56,26 @@ function do_it() {
 
     const container = document.querySelector(".anime-container");
 
-    // remove existing dots
-    const dots1 = container.getElementsByClassName("dot1");
-    while(dots1[0]) {
-        container.removeChild(dots1[0]);
-    }
-    const dots2 = container.getElementsByClassName("dot2");
-    while(dots2[0]) {
-        container.removeChild(dots2[0]);
+    // remove existing dots (kills the animation timeline, if it exists)
+    const dots = container.getElementsByClassName("dot1");
+    while(dots[0]) {
+        container.removeChild(dots[0]);
     }
 
-    // place two sets of dots along the trajectory
+    // place dots along the trajectory
     for (let i = 0; i < N; i += 1) {
         let t = i/num;
         let x =  ampl_x * Math.sin(w_x * t + phi0_x) + window.innerWidth / 2;
         let y = -ampl_y * Math.sin(w_y * t + phi0_y) + window.innerHeight / 2;
 
-        let my_dot1 = document.createElement("div");
-        my_dot1.classList.add("dot1");
-        my_dot1.style.width = 2 + "px";
-        my_dot1.style.height = 2 + "px";
-        my_dot1.style.left = x + "px";
-        my_dot1.style.top = y + "px";
-        my_dot1.style.opacity = "0";
-        container.appendChild(my_dot1);
-
-        let my_dot2 = document.createElement("div");
-        my_dot2.classList.add("dot2");
-        my_dot2.style.width = 2 + "px";
-        my_dot2.style.height = 2 + "px";
-        my_dot2.style.left = x + "px";
-        my_dot2.style.top = y + "px";
-        my_dot2.style.opacity = "0";
-        container.appendChild(my_dot2);
+        let my_dot = document.createElement("div");
+        my_dot.classList.add("dot1");
+        my_dot.style.width = 2 + "px";
+        my_dot.style.height = 2 + "px";
+        my_dot.style.left = x + "px";
+        my_dot.style.top = y + "px";
+        my_dot.style.opacity = "0";
+        container.appendChild(my_dot);
     }
 
     let tot_time = 1000*T;
@@ -104,51 +91,26 @@ function do_it() {
     } else {
         fade = tot_time-onset;
     }
-
-    // WORKAROUND
-    // animation has to complete (including fade) before strating new loop.
-    // two animation instances (the two sets of dots) can loop independently (hopefully) without gaps: 
-
-    const anim_dots1 = anime({
-        targets: document.querySelectorAll(".dot1"),
-        loop: true,
-        easing: "linear",
-        opacity: [
-            { value: 1, duration: onset, delay: anime.stagger(1000/num) },
-            { value: 1-1*fade/(vis_time-onset), duration: fade }
-        ],
-        scale: [
-            { value: 5, duration: onset, delay: anime.stagger(1000/num) },
-            { value: 5-4*fade/(vis_time-onset), duration: fade }
-        ],
-        endDelay: wait,
-        autoplay: false,
-
-        // start anim_dots2 half-way through the fisrt loop of anim_dots1
-        update: (anim) => {
-            if (!anim_dots2.began && anim.progress >= 50.0) {
-                anim_dots2.seek( (anim.progress-50.0) / 100 * anim.duration );
-                anim_dots2.play();
-            }
-        }
-    });
-
-    const anim_dots2 = anime({
-        targets: document.querySelectorAll(".dot2"),
-        loop: true,
-        easing: "linear",
-        opacity: [
-            { value: 1, duration: onset, delay: anime.stagger(1000/num) },
-            { value: 1-1*fade/(vis_time-onset), duration: fade }
-        ],
-        scale: [
-            { value: 5, duration: onset, delay: anime.stagger(1000/num) },
-            { value: 5-4*fade/(vis_time-onset), duration: fade }
-        ],
-        endDelay: wait,
-        autoplay: false
-    });
-
-    anim_dots1.play();
+    // create new animation timeline
+    const my_timeline = anime.createTimeline();
+    my_timeline.add( // add animation staggered across timeline
+        [".dot1"], // targets
+        {
+            loop: true,
+            easing: "linear",
+            opacity: [
+                { to: 1, duration: onset},
+                { to: 1-1*fade/(vis_time-onset), duration: fade},
+                { to: 0, duration: wait}
+            ],
+            scale: [
+                { to: 5, duration: onset},
+                { to: 5-4*fade/(vis_time-onset), duration: fade},
+                { to: 1, duration: wait}
+            ],
+            autoplay: true
+        },
+        anime.stagger(1000/num) // time position
+    );
 }
 
